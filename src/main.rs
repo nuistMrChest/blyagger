@@ -23,18 +23,30 @@ fn main(){
         panic!("too many arguments");
     }
     let origin_path:String=env::args().nth(1).unwrap();
-    let origin=match fs::read_to_string(format!("{}/origin.txt",origin_path.clone())){
-        Ok(o)=>o,
-        Err(_)=>panic!("failed reading text")
-    };
-    let repo_path= match fs::read_to_string(format!("{}/.blyagger",home)){
+    let origin=
+        match fs::read_to_string(
+            format!(
+                "{}/origin.txt",
+                origin_path.clone()
+            )
+        ){
+            Ok(o)=>o,
+            Err(_)=>panic!("failed reading text")
+        };
+    let repo_path=match fs::read_to_string(format!("{}/.blyagger",home)){
         Ok(rp)=>rp,
         Err(_)=>panic!("failed reading text")
     };
-    let blog_list=match fs::read_to_string(format!("{}/blog_list.html",repo_path.trim())){
-        Ok(bl)=>bl,
-        Err(_)=>panic!("failed reading text")
-    };
+    let blog_list=
+        match fs::read_to_string(
+            format!(
+                "{}/blog_list.html",
+                repo_path.trim()
+            )
+        ){
+            Ok(bl)=>bl,
+            Err(_)=>panic!("failed reading text")
+        };
     let blog_id=match crate::repo::read_blog_count(blog_list.clone()){
         Ok(bi)=>bi+1,
         Err(_)=>panic!("failed in reading blog id")
@@ -54,10 +66,15 @@ fn main(){
         Err(e)=>panic!("failed to write html:{}",e),
         _=>()
     }
-    let updated_blog_list=match crate::repo::update_blog_list(blog_list,blog_id,article.clone().title){
-        Ok(ubl)=>ubl,
-        Err(e)=>panic!("{}",e)
-    };
+    let updated_blog_list=
+        match crate::repo::update_blog_list(
+            blog_list,
+            blog_id,
+            article.clone().title
+        ){
+            Ok(ubl)=>ubl,
+            Err(e)=>panic!("{}",e)
+        };
     match fs::write(
         format!(
             "{}/blog_list.html",
