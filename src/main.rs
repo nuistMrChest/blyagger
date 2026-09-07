@@ -12,6 +12,11 @@ use std::fs;
 use std::env;
 
 fn main(){
+    let home;
+    match env::var("HOME"){
+        Ok(h)=>home=h,
+        Err(e)=>panic!("{}",e)
+    }
     if env::args().len()<2{
         panic!("no input directory");
     }
@@ -27,7 +32,7 @@ fn main(){
             panic!("failed reading text")
     }
     let repo_path;
-    match fs::read_to_string("/home/mrchest/.blyagger"){
+    match fs::read_to_string(format!("{}/.blyagger",home)){
         Ok(rp)=>
             repo_path=rp,
         Err(_)=>
