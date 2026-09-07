@@ -12,11 +12,10 @@ use std::fs;
 use std::env;
 
 fn main(){
-    let home;
-    match env::var("HOME"){
-        Ok(h)=>home=h,
+    let home=match env::var("HOME"){
+        Ok(h)=>h,
         Err(e)=>panic!("{}",e)
-    }
+    };
     if env::args().len()<2{
         panic!("no input directory");
     }
@@ -24,37 +23,26 @@ fn main(){
         panic!("too many arguments");
     }
     let origin_path:String=env::args().nth(1).unwrap();
-    let origin;
-    match fs::read_to_string(format!("{}/origin.txt",origin_path.clone())){
-        Ok(o)=>
-            origin=o,
-        Err(_)=>
-            panic!("failed reading text")
-    }
-    let repo_path;
-    match fs::read_to_string(format!("{}/.blyagger",home)){
-        Ok(rp)=>
-            repo_path=rp,
-        Err(_)=>
-            panic!("failed reading text")
-    }
-    let blog_list;
-    match fs::read_to_string(format!("{}/blog_list.html",repo_path.trim())){
-        Ok(bl)=>
-            blog_list=bl,
-        Err(_)=>
-            panic!("failed reading text")
-    }
-    let blog_id;
-    match crate::repo::read_blog_count(blog_list.clone()){
-        Ok(bi)=>blog_id=bi+1,
+    let origin=match fs::read_to_string(format!("{}/origin.txt",origin_path.clone())){
+        Ok(o)=>o,
+        Err(_)=>panic!("failed reading text")
+    };
+    let repo_path= match fs::read_to_string(format!("{}/.blyagger",home)){
+        Ok(rp)=>rp,
+        Err(_)=>panic!("failed reading text")
+    };
+    let blog_list=match fs::read_to_string(format!("{}/blog_list.html",repo_path.trim())){
+        Ok(bl)=>bl,
+        Err(_)=>panic!("failed reading text")
+    };
+    let blog_id=match crate::repo::read_blog_count(blog_list.clone()){
+        Ok(bi)=>bi+1,
         Err(_)=>panic!("failed in reading blog id")
-    }
-    let article;
-    match crate::core_logic::Article::new(origin,blog_id){
-        Ok(a)=>article=a,
+    };
+    let article=match crate::core_logic::Article::new(origin,blog_id){
+        Ok(a)=>a,
         Err(e)=>panic!("{}",e)
-    }
+    };
     match fs::write(
         format!(
             "{}/blogs/{}.html",
@@ -66,11 +54,10 @@ fn main(){
         Err(e)=>panic!("failed to write html:{}",e),
         _=>()
     }
-    let updated_blog_list;
-    match crate::repo::update_blog_list(blog_list,blog_id,article.clone().title){
-        Ok(ubl)=>updated_blog_list=ubl,
+    let updated_blog_list=match crate::repo::update_blog_list(blog_list,blog_id,article.clone().title){
+        Ok(ubl)=>ubl,
         Err(e)=>panic!("{}",e)
-    }
+    };
     match fs::write(
         format!(
             "{}/blog_list.html",
